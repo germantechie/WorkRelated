@@ -80,7 +80,7 @@ for (dirpath, dirnames, filenames) in walk(folderPath):
 				print("test:", FullFilePath)
 				ScriptDescription = fetchDescriptionValue(FullFilePath)
 				scriptInList = storeScriptFile(FullFilePath)
-				#updatedScriptList = AddComment(ScriptDescription, scriptInList)
-				#WriteScript(updatedScriptList, FullFilePath)
+				updatedScriptList = AddComment(ScriptDescription, scriptInList)
+				WriteScript(updatedScriptList, FullFilePath)
 			else:
 				print("batch:" , FullFilePath)
