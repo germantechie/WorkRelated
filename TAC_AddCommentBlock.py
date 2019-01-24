@@ -36,7 +36,8 @@ def AddComment(descText, xmlList):
 				</Comment>\n""")
 		return xmlList # Updated List with new Comment Tag
 	else:
-		print("Comment already present, hence, skipping.....")	
+		print("Comment already present, hence, skipping.....")
+		return "SKIP"
 			
 def WriteScript(scriptLinebyLine, scriptFilePath):
 	"This function opens the Script file and overwrites the entire script line by line now including the added comment step."
@@ -81,6 +82,7 @@ for (dirpath, dirnames, filenames) in walk(folderPath):
 				ScriptDescription = fetchDescriptionValue(FullFilePath)
 				scriptInList = storeScriptFile(FullFilePath)
 				updatedScriptList = AddComment(ScriptDescription, scriptInList)
-				WriteScript(updatedScriptList, FullFilePath)
+				if updatedScriptList != "SKIP":
+					WriteScript(updatedScriptList, FullFilePath)
 			else:
 				print("batch:" , FullFilePath)
