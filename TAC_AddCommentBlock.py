@@ -18,7 +18,10 @@ def storeScriptFile(scriptFile):
 	xmlScriptAsList = []
 	with open(scriptFile, 'rb') as xmlScript_file:  # opens in binary mode to read bytes
 		for eachLine in xmlScript_file:
-			xmlScriptAsList.append(eachLine.decode('utf8'))  # converts bytes to Unicode UTF-8 encoding
+			encodedLine = eachLine.decode('utf8')  # converts bytes to Unicode UTF-8 encoding
+			encodedLine = encodedLine.rstrip()     # remove trailing whitespaces with CR and LF characters.
+			updatedLine = encodedLine + "\n"
+			xmlScriptAsList.append(updatedLine)  
 	return xmlScriptAsList
 	
 def AddComment(descText, xmlList):
