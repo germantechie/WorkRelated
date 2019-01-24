@@ -12,42 +12,39 @@ from xml.etree import ElementTree as ET				# Used to convert XML into Tree Struc
 import os, html
 from os import walk
  
-def AddComment(descText, scriptFile):
-	"This function is used to read the script file line by line, parse for Description tag and fetch its value and then call the WriteScript() to add the description as a comment."
+def storeScriptFile(scriptFile):
+	"""This function takes FullFilePath as input and will read the TAC script line by line as bytes, 
+	    convert to Unicode text and store in a List object"""
+	xmlScriptAsList = []
+	with open(scriptFile, 'rb') as xmlScript_file:  # opens in binary mode to read bytes
+		for eachLine in xmlScript_file:
+			xmlScriptAsList.append(eachLine.decode('utf8'))  # converts bytes to Unicode UTF-8 encoding
+	return xmlScriptAsList
 	
-	with open(scriptFile, 'r') as xmlScript_file:
-		fileLine_List = xmlScript_file.readlines()  # List to hold all lines within the XML
-
-		if 'Comment id="96602b49-ea73-4a75-afdc-4de8b15a8308"' not in str(fileLine_List):  # to check if already comment step is added to the script.
-			# Find the required string within each line and capture the index value of the list.
-			for lin_num, lin in enumerate(fileLine_List):
-				if lin.find("<ItemCollection>") > 0:
-					cap_lin_num = lin_num + 1
-					break
-			fileLine_List.insert(cap_lin_num, 
-				""" <Comment id="96602b49-ea73-4a75-afdc-4de8b15a8308">
-					  <Caption>Script Objective</Caption>
-					  <Comments>""" + descText + """</Comments>
-					  <OutputComment>true</OutputComment>
-					</Comment>\n""")
-		
-			xmlScript_file.close()  # this statement is not necessary as With statment is used for automatic file closure at the end of its block.
-			WriteScript(fileLine_List, scriptFile)
-		else:
-			RemoveComment()
-		
-
-def RemoveComment():
-	print("for now")
+def AddComment(descText, xmlList):
+	if 'Comment id="96602b49-ea73-4a75-afdc-4de8b15a8308"' not in str(xmlList):  # to check if already comment step is added to the script.
+		# Find the required string within each line and capture the index value of the list.
+		for lin_num, line in enumerate(xmlList):
+			if "<ItemCollection>" in str(line):
+				cap_lin_num = lin_num + 1
+				break
+		xmlList.insert(cap_lin_num, 
+			""" <Comment id="96602b49-ea73-4a75-afdc-4de8b15a8308">
+				  <Caption>Script Objective</Caption>
+				  <Comments>""" + descText + """</Comments>
+				  <OutputComment>true</OutputComment>
+				</Comment>\n""")
+		return xmlList # Updated List with new Comment Tag
+	else:
+		print("Comment already present, hence, skipping.....")	
 			
 def WriteScript(scriptLinebyLine, scriptFilePath):
 	"This function opens the Script file and overwrites the entire script line by line now including the added comment step."
-	with open(scriptFilePath, 'w') as xmlScript_file:		
+	with open(scriptFilePath, 'w', encoding='utf-8') as xmlScript_file:		
 		for eachLine in scriptLinebyLine:
-			xmlScript_file.writelines(eachLine)
-		#xmlScript_file.write(''.join(scriptLinebyLine))  
-		xmlScript_file.close()
-		
+			xmlScript_file.write(eachLine)
+	print("Write Success!")
+	
 def fetchDescriptionValue(inputFile):
 	"This function is used to take a filename, parse for Description tag and fetch its value"
 	tree = ET.parse(inputFile)  
@@ -63,6 +60,7 @@ def fetchDescriptionValue(inputFile):
 			return "Objective is BLANK!"
 	
 def returnTestScriptFirstLine(sFilePath):
+	"""This function is used to read and return only the first line from the given FullFilePath"""
 	with open(sFilePath, 'r') as evTestFH:
 		Line1 = evTestFH.readline().strip()
 		return Line1
@@ -81,6 +79,8 @@ for (dirpath, dirnames, filenames) in walk(folderPath):
 			if "<TestScripts" in xmlLine1:   # Evaluating if the Testscript is a BatchFile or a ScriptFile.
 				print("test:", FullFilePath)
 				ScriptDescription = fetchDescriptionValue(FullFilePath)
-				AddComment(ScriptDescription, FullFilePath)
+				scriptInList = storeScriptFile(FullFilePath)
+				#updatedScriptList = AddComment(ScriptDescription, scriptInList)
+				#WriteScript(updatedScriptList, FullFilePath)
 			else:
 				print("batch:" , FullFilePath)
