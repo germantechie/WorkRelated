@@ -39,7 +39,19 @@ def AddComment(descText, xmlList):
 		return xmlList # Updated List with new Comment Tag
 	else:
 		print("Comment already present, hence, skipping.....")
-		return "SKIP"
+		startIndx = endIndx = None
+		# Below logic is to find the start and end lines of added comment step, so that it can be removed from the file.
+		for indx, line in enumerate(xmlList):
+			if startIndx is not None and endIndx is not None:   # This line will control the loop execution to exit when it finds the start and end Comment Tags
+				break
+			if "Comment id=" in str(line):  # This looks for the first occurence of the given search text
+				startIndx = indx
+			if "</Comment>" in str(line):   # This looks for the first occurence of the given search text
+				endIndx = indx
+		
+		strippedXML = xmlList[:startIndx] + xmlList[endIndx+1:]  # List concatenation after slicing the required data
+		return strippedXML
+		#return "SKIP"
 			
 def WriteScript(scriptLinebyLine, scriptFilePath):
 	"This function opens the Script file and overwrites the entire script line by line now including the added comment step."
