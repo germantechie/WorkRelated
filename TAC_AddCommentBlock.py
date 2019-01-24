@@ -1,12 +1,11 @@
 # Objective
 # 1. Read script xml files within folder recursively, avoid batch file
-# 2. Check if file is in write mode else stop further operation
+# 2. Assuming file will be in Write mode, below program is developed, hence not Checking if file is in write mode else stop further operation
 # 3. Open the single script file, capture the Description and then add the new comment block before any other operations.
-# 4. Write the additions to the script file.
+# 4. Write the additions to the script file. If the Description has multiple lines, to show in html Duckcall, replace empty lines with <br>.
 # 5. Avoid adding duplicate comment step to script file.
 # 6. Code to remove the added comment for all files based on a flag.
-
-# work on to know if Comment section is already added into the script.
+# 7. logging of which all files were skipped, updated in a list so that it can be printed to a seperate file.
 
 from xml.etree import ElementTree as ET				# Used to convert XML into Tree Structure
 import os, html
@@ -58,8 +57,10 @@ def fetchDescriptionValue(inputFile):
 	for description in root.iter('Description'): 
 		scriptIntent = description.text
 		
-		if scriptIntent is not None:  			 # To check if there is an empty Description block in Script XML
-			return html.escape(scriptIntent)     # Escaping the special characters in text using the html.escape module.
+		if scriptIntent is not None:  			              # To check if there is an empty Description block in Script XML
+			originalDescription = html.escape(scriptIntent)   # Escaping the special characters in text using the html.escape module.
+			htmlFriendlyText = originalDescription.replace("\n", "&lt;br&gt;")  # adding <br> for all the newline character found within description since, it will look better in Duckcall.
+			return htmlFriendlyText
 		else:
 			return "Objective is BLANK!"
 	
