@@ -92,23 +92,23 @@ def returnTestScriptFirstLine(sFilePath):
 		return Line1
 		
 # -- -- Main Program starts below ---
-#addRemoveFlag = 0    # 0 = Add Comment step, don't remove. 
-addRemoveFlag = 1   # 1 = Remove Comment step.
+addRemoveFlag = 0    # 0 = Add Comment step, don't remove. 
+#addRemoveFlag = 1   # 1 = Remove Comment step.
 
 logAddComment = []
 logSkipRemoveComment = []
 
-folderPath = 'C:\\UserArea\\1_Automation_Tools\\7_GitHub\\WorkRelated\\1_TestFiles\\'
-#folderPath = 'C:\\AFS.Claims\\Branches\\R10.7.1.x\\TestScripts\\Automated TestScripts\\US_Locale_Scripts\\Automated_Scripts\\Smoke_Testing'
+#folderPath = 'C:\\UserArea\\1_Automation_Tools\\7_GitHub\\WorkRelated\\1_TestFiles\\'
+folderPath = 'C:\\AFS.Claims\\Main\\TestScripts\\Automated TestScripts\\US_Locale_Scripts\\Automated_Scripts\\Assembly_Testing\\Manual_AT\\'
 
 for (dirpath, dirnames, filenames) in walk(folderPath):  # get all filenames within the given folder into list
 	for name in filenames:
-		if name.find(".xml") > 0:						 # Work only with xml files in a directory
+		if name.find(".xml") > 0 or name.find(".XML") > 0:						 # Work only with xml files in a directory
 			FullFilePath = os.path.join(dirpath, name)   # Join the path with filename
 
 			xmlLine1 = returnTestScriptFirstLine(FullFilePath)			
 			if "<TestScripts" in xmlLine1:   		# Evaluating if the Testscript is a BatchFile or a ScriptFile.
-				#print("test:", FullFilePath)
+				print("test:--", FullFilePath)
 				if addRemoveFlag == 0:        		# Evaluate if Comment Step has to be added or removed. if block is for Add. elif block is for Remove.
 					ScriptDescription = fetchDescriptionValue(FullFilePath)
 					scriptInList = storeScriptFile(FullFilePath)
