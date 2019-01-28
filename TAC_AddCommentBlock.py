@@ -87,10 +87,11 @@ def fetchDescriptionValue(inputFile):
 	
 def returnTestScriptFirstLine(sFilePath):
 	"""This function is used to read and return only the first line from the given FullFilePath"""
-	with open(sFilePath, 'r') as evTestFH:
-		Line1 = evTestFH.readline().strip()
+	with open(sFilePath, 'rb') as evTestFH:        # opens in binary mode to read bytes
+		Line1 = evTestFH.readline().decode('utf8') # converts bytes to Unicode UTF-8 encoding
+		Line1 = Line1.strip()
 		return Line1
-		
+	
 # -- -- Main Program starts below ---
 addRemoveFlag = 0    # 0 = Add Comment step, don't remove. 
 #addRemoveFlag = 1   # 1 = Remove Comment step.
